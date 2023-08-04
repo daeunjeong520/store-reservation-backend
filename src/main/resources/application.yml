@@ -1,1 +1,28 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/store_reservation?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: root
+    password: wjdekdms0814
 
+  jpa:
+    open-in-view: true
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate.format_sql: true
+      dialect: org.hibernate.dialect.MySQL8InnoDBDialect
+
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      enabled: true
+  jwt:
+    secret: ZGFldW4tc3ByaW5nLWJvb3Qtand0LXR1dG9yaWFsLXNlY3JldC1kYWV1bi10ZWNoLXNwcmluZ2Jvb3Qtand0LXR1dG9yaWFsLXN0b3JlLXJlc2VydmF0aW9uLXByb2plY3Qtand0LXNlY3JldC1rZXkK
+    token-validity-in-seconds: 60 * 60
+
+logging:
+  level:
+    org.hibernate.SQL: debug
