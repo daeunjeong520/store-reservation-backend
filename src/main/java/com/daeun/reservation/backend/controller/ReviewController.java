@@ -37,15 +37,17 @@ public class ReviewController {
     // 리뷰 등록
     @PostMapping("/{reservationId}")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public void createReview(
+    public CreateReview.Response createReview(
             @RequestBody @Valid CreateReview.Request request,
             @PathVariable Long reservationId
     ) {
-        reviewService.createReview(
-                reservationId,
-                request.getTitle(),
-                request.getContent(),
-                request.getRating()
+        return CreateReview.Response.from(
+                reviewService.createReview(
+                        reservationId,
+                        request.getTitle(),
+                        request.getContent(),
+                        request.getRating()
+                )
         );
     }
 }

@@ -2,7 +2,6 @@ package com.daeun.reservation.backend.service;
 
 import com.daeun.reservation.backend.domain.User;
 import com.daeun.reservation.backend.dto.UserDto;
-import com.daeun.reservation.backend.dto.constants.ErrorCode;
 import com.daeun.reservation.backend.exception.StoreReservationException;
 import com.daeun.reservation.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

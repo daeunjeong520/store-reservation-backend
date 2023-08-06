@@ -48,7 +48,7 @@ public class ReservationService {
                 .orElseThrow(() -> new StoreReservationException(ErrorCode.STORE_NOT_FOUND));
 
         // 예약 시간 확인
-        TimeTable timeTable = timeTableRepository.findByStoreAndDateAndStartedAndEnded(store, date, started, ended)
+        TimeTable timeTable = timeTableRepository.findByStore_StoreIdAndDateAndStartedAndEnded(storeId, date, started, ended)
                 .orElseThrow(() -> new StoreReservationException(ErrorCode.TIMETABLE_NOT_FOUND));
 
         // 해당 예약 시간 이미 사용중이면 에러 (예약 가능 여부 체크)
@@ -76,7 +76,7 @@ public class ReservationService {
     }
 
     /**
-     * 예약시간 도착(예약 사용) (10분전 도착하지 않으면 -> 예약 취소)
+     * 예약 시간 도착(예약 사용) (10분전 도착하지 않으면 -> 예약 취소)
      */
     @Transactional
     public ReservationDto useReservation(Long reservationId, LocalTime arrivedAt) {

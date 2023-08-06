@@ -11,7 +11,6 @@ import com.daeun.reservation.backend.dto.constants.ReservationStatus;
 import com.daeun.reservation.backend.exception.StoreReservationException;
 import com.daeun.reservation.backend.repository.ReservationRepository;
 import com.daeun.reservation.backend.repository.ReviewRepository;
-import com.daeun.reservation.backend.repository.StoreRepository;
 import com.daeun.reservation.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,6 +28,7 @@ public class ReviewService {
 
 
     // 리뷰 저장 (check -> 해당 예약을 사용하였는지)
+    @Transactional
     public ReviewDto createReview(Long reservationId, String title, String content, Rating rating) {
         // 사용자 확인
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

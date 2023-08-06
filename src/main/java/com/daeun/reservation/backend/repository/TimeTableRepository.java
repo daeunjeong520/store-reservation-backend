@@ -1,6 +1,5 @@
 package com.daeun.reservation.backend.repository;
 
-import com.daeun.reservation.backend.domain.Store;
 import com.daeun.reservation.backend.domain.TimeTable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -11,8 +10,8 @@ import java.util.Optional;
 
 public interface TimeTableRepository extends JpaRepository<TimeTable, Long> {
 
-    Optional<TimeTable> findByStoreAndDateAndStartedAndEnded(
-            Store store, LocalDate date, LocalTime started, LocalTime ended
+    Optional<TimeTable> findByStore_StoreIdAndDateAndStartedAndEnded(
+            Long storeId, LocalDate date, LocalTime started, LocalTime ended
     );
 
     Optional<TimeTable> findByStartedAndEnded(LocalTime started, LocalTime ended);
