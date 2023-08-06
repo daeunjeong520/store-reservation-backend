@@ -1,15 +1,15 @@
 package com.daeun.reservation.backend.controller;
 
-import com.daeun.reservation.backend.dto.RegisterStore;
-import com.daeun.reservation.backend.dto.StoreDto;
-import com.daeun.reservation.backend.dto.StoreInfo;
+import com.daeun.reservation.backend.dto.*;
 import com.daeun.reservation.backend.service.StoreService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,6 +48,34 @@ public class StoreController {
        return storeDtos.stream()
                .map(StoreInfo::from)
                .collect(Collectors.toList());
+    }
+
+    // 상점에 예약 테이블 구성
+    @PostMapping("/{storeId}")
+    @PreAuthorize("hasRole('ROLE_MANAGER')")
+    public List<CreateTimeTable.Response> createTimeTable(
+            @RequestBody @Valid List<CreateTimeTable.Request> requests,
+            @PathVariable Long storeId
+    ) {
+        List<TimeTableDto> timeTableDtos = requests.stream().map(TimeTableDto::fromRequest)
+                .collect(Collectors.toList());
+
+        return storeService.createTimeTable(storeId, timeTableDtos)
+                .stream()
+                .map(CreateTimeTable.Response::from)
+                .collect(Collectors.toList());
+    }
+
+    // 날짜 별 시간 테이블 목록
+    @GetMapping("/{storeId}/timetable")
+    public List<TimeTableByDate> getTimeTableByDate(
+            @PathVariable Long storeId,
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date
+    ) {
+        return storeService.getTimeTableByDate(storeId, date)
+                .stream()
+                .map(TimeTableByDate::from)
+                .collect(Collectors.toList());
     }
 
     // 상점 상세조회

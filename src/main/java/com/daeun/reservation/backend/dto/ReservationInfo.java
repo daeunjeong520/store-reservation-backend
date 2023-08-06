@@ -1,9 +1,7 @@
 package com.daeun.reservation.backend.dto;
 
-import com.daeun.reservation.backend.domain.Reservation;
+import com.daeun.reservation.backend.dto.constants.ReservationStatus;
 import lombok.*;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -12,17 +10,19 @@ import java.time.LocalDateTime;
 @Builder
 public class ReservationInfo {
 
-    private String storeName;
-    private String username;
-    private LocalDateTime started;
-    private LocalDateTime ended;
+    private Long reservationId;
+    private UserDto user;
+    private StoreDto store;
+    private TimeTableDto timeTable;
+    private ReservationStatus status;
 
     public static ReservationInfo from(ReservationDto reservationDto) {
         return ReservationInfo.builder()
-                .storeName(reservationDto.getStoreName())
-                .username(reservationDto.getUsername())
-                .started(reservationDto.getStarted())
-                .ended(reservationDto.getEnded())
+                .reservationId(reservationDto.getReservationId())
+                .user(reservationDto.getUser())
+                .store(reservationDto.getStore())
+                .timeTable(reservationDto.getTimeTable())
+                .status(reservationDto.getStatus())
                 .build();
     }
 }

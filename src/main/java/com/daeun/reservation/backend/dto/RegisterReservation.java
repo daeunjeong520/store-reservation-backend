@@ -1,12 +1,27 @@
 package com.daeun.reservation.backend.dto;
 
+import com.daeun.reservation.backend.dto.constants.ReservationStatus;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 public class RegisterReservation {
 
     @Getter
+    @Setter
     @AllArgsConstructor
-    static class Request {
+    public static class Request {
+
+        @DateTimeFormat(pattern = "yyyy-MM-dd")
+        private LocalDate date;
+
+        @DateTimeFormat(pattern = "HH:mm:ss")
+        private LocalTime started;
+
+        @DateTimeFormat(pattern = "HH:mm:ss")
+        private LocalTime ended;
 
     }
 
@@ -15,7 +30,22 @@ public class RegisterReservation {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    static class Response {
+    public static class Response {
 
+        private Long reservationId; // 예약 아이디
+        private UserDto user; // 예약 사용자 이름
+        private String storeName; // 상점 이름
+        private TimeTableDto timeTable; // 예약 시간 정보
+        private ReservationStatus status; // 예약 상태
+
+        public static Response from(ReservationDto reservationDto) {
+            return Response.builder()
+                    .reservationId(reservationDto.getReservationId())
+                    .user(reservationDto.getUser())
+                    .storeName(reservationDto.getStore().getName())
+                    .timeTable(reservationDto.getTimeTable())
+                    .status(reservationDto.getStatus())
+                    .build();
+        }
     }
 }

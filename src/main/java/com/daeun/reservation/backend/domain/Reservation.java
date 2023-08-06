@@ -1,14 +1,9 @@
 package com.daeun.reservation.backend.domain;
 
 import com.daeun.reservation.backend.dto.constants.ReservationStatus;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
-
-import java.time.LocalDateTime;
 
 import static javax.persistence.FetchType.LAZY;
 
@@ -31,9 +26,11 @@ public class Reservation {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private LocalDateTime started; // 이용 시작 시간
-    private LocalDateTime ended; // 이용 끝나는 시간
+    @OneToOne(fetch = LAZY)
+    @JoinColumn(name = "time_table_id")
+    private TimeTable timeTable;
 
-    private ReservationStatus status; // 예약 사용 여부 [REGISTERED, USED]
-
+    @Setter
+    @Enumerated(EnumType.STRING)
+    private ReservationStatus reservationStatus; // 예약 상태
 }
