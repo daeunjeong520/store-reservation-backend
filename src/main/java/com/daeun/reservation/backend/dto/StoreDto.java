@@ -12,7 +12,7 @@ public class StoreDto {
 
     private String managerName;
     private Long storeId;
-    private String name;
+    private String storeName;
     private String location;
     private String description;
 
@@ -20,7 +20,7 @@ public class StoreDto {
         return StoreDto.builder()
                 .managerName(store.getUser().getUsername())
                 .storeId(store.getStoreId())
-                .name(store.getName())
+                .storeName(store.getName())
                 .location(store.getLocation())
                 .description(store.getDescription())
                 .build();

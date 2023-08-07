@@ -1,8 +1,8 @@
 package com.daeun.reservation.backend.dto;
 
 import lombok.*;
+import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 
 public class RegisterStore {
@@ -13,14 +13,14 @@ public class RegisterStore {
     public static class Request {
 
         @NotNull
-        @Max(100)
+        @Length(max = 100)
         private String name;
 
         @NotNull
         private String location;
 
         @NotNull
-        @Max(500)
+        @Length(max = 500)
         private String description;
     }
 
@@ -30,15 +30,15 @@ public class RegisterStore {
     @AllArgsConstructor
     @Builder
     public static class Response {
-        private String username;
-        private String name;
+        private String managerName;
+        private String storeName;
         private String location;
         private String description;
 
         public static Response from(StoreDto storeDto) {
             return Response.builder()
-                    .username(storeDto.getManagerName())
-                    .name(storeDto.getName())
+                    .managerName(storeDto.getManagerName())
+                    .storeName(storeDto.getStoreName())
                     .location(storeDto.getLocation())
                     .description(storeDto.getDescription())
                     .build();

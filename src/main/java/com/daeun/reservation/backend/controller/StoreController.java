@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
-@RequestMapping("/stores")
+@RequestMapping("/api/stores")
 @RequiredArgsConstructor
 public class StoreController {
 
@@ -93,7 +93,6 @@ public class StoreController {
     }
 
     // 점주 예약 승인/거절
-    // localhost:8080/stores/1/approval?status=true (승인/거절)
     @GetMapping("/{storeId}/approval")
     @PreAuthorize("hasRole('ROLE_MANAGER')")
     public ApprovalStatus getApprovalStatus(

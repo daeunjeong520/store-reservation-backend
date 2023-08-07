@@ -1,10 +1,9 @@
 package com.daeun.reservation.backend.dto;
 
 import lombok.*;
+import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.List;
 
 public class SignUp {
@@ -15,11 +14,10 @@ public class SignUp {
     public static class Request {
 
         @NotNull
-        @Max(50)
+        @Length(max = 50)
         private String username;
 
         @NotNull
-        @Size(min = 8, max = 50)
         private String password;
 
         @NotNull

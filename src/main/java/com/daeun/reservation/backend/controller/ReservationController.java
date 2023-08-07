@@ -15,14 +15,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/reservations")
+@RequestMapping("/api/reservations")
 @RequiredArgsConstructor
 public class ReservationController {
 
     private final ReservationService reservationService;
 
     // 예약 진행
-    // localhost:8080/reservations?storeId=1&status=true (승인/거절)
     @PostMapping
     public RegisterReservation.Response registerReservation(
             @RequestBody @Valid RegisterReservation.Request request,

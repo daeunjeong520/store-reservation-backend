@@ -11,7 +11,7 @@ public class StoreInfo {
 
     private Long storeId;
     private String managerName;
-    private String name;
+    private String storeName;
     private String location;
     private String description;
 
@@ -19,7 +19,7 @@ public class StoreInfo {
         return StoreInfo.builder()
                 .storeId(storeDto.getStoreId())
                 .managerName(storeDto.getManagerName())
-                .name(storeDto.getName())
+                .storeName(storeDto.getStoreName())
                 .location(storeDto.getLocation())
                 .description(storeDto.getDescription())
                 .build();

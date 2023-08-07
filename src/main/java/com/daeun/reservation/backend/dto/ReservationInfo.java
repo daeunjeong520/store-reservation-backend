@@ -11,7 +11,7 @@ import lombok.*;
 public class ReservationInfo {
 
     private Long reservationId;
-    private UserDto user;
+    private String username;
     private StoreDto store;
     private TimeTableDto timeTable;
     private ReservationStatus status;
@@ -19,7 +19,7 @@ public class ReservationInfo {
     public static ReservationInfo from(ReservationDto reservationDto) {
         return ReservationInfo.builder()
                 .reservationId(reservationDto.getReservationId())
-                .user(reservationDto.getUser())
+                .username(reservationDto.getUser().getUsername())
                 .store(reservationDto.getStore())
                 .timeTable(reservationDto.getTimeTable())
                 .status(reservationDto.getStatus())

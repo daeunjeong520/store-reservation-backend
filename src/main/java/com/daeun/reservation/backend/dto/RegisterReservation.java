@@ -33,7 +33,7 @@ public class RegisterReservation {
     public static class Response {
 
         private Long reservationId; // 예약 아이디
-        private UserDto user; // 예약 사용자 이름
+        private String username; // 예약 사용자 이름
         private String storeName; // 상점 이름
         private TimeTableDto timeTable; // 예약 시간 정보
         private ReservationStatus status; // 예약 상태
@@ -41,8 +41,8 @@ public class RegisterReservation {
         public static Response from(ReservationDto reservationDto) {
             return Response.builder()
                     .reservationId(reservationDto.getReservationId())
-                    .user(reservationDto.getUser())
-                    .storeName(reservationDto.getStore().getName())
+                    .username(reservationDto.getUser().getUsername())
+                    .storeName(reservationDto.getStore().getStoreName())
                     .timeTable(reservationDto.getTimeTable())
                     .status(reservationDto.getStatus())
                     .build();

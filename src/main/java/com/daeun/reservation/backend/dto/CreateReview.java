@@ -2,8 +2,8 @@ package com.daeun.reservation.backend.dto;
 
 import com.daeun.reservation.backend.dto.constants.Rating;
 import lombok.*;
+import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 
 public class CreateReview {
@@ -14,11 +14,11 @@ public class CreateReview {
     public static class Request {
 
         @NotNull
-        @Max(100)
+        @Length(max = 100)
         private String title;
 
         @NotNull
-        @Max(500)
+        @Length(max = 500)
         private String content;
 
         @NotNull
@@ -44,7 +44,7 @@ public class CreateReview {
             return Response.builder()
                     .reviewId(reviewDto.getReviewId())
                     .username(reviewDto.getUsername())
-                    .storeName(reviewDto.getStore().getName())
+                    .storeName(reviewDto.getStore().getStoreName())
                     .rating(reviewDto.getRating())
                     .build();
         }

@@ -21,7 +21,6 @@ spring:
       enabled: true
   jwt:
     secret: ZGFldW4tc3ByaW5nLWJvb3Qtand0LXR1dG9yaWFsLXNlY3JldC1kYWV1bi10ZWNoLXNwcmluZ2Jvb3Qtand0LXR1dG9yaWFsLXN0b3JlLXJlc2VydmF0aW9uLXByb2plY3Qtand0LXNlY3JldC1rZXkK
-    token-validity-in-seconds: 60 * 60
 
 logging:
   level:
