@@ -23,11 +23,13 @@ import java.util.stream.Collectors;
 public class User implements UserDetails {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
+    @Column(name = "user_id", nullable = false)
     private Long userId;
 
+    @Column(name = "username", nullable = false, length = 50, unique = true)
     private String username;
 
+    @Column(name = "password", nullable = false, length = 50)
     private String password;
 
     @ElementCollection(fetch = FetchType.EAGER)

@@ -26,14 +26,13 @@ public class ReviewService {
     private final ReservationRepository reservationRepository;
     private final ReviewRepository reviewRepository;
 
-
-    // 리뷰 저장 (check -> 해당 예약을 사용하였는지)
+    /**
+     * 리뷰 저장
+     */
     @Transactional
     public ReviewDto createReview(Long reservationId, String title, String content, Rating rating) {
         // 사용자 확인
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User findUser = userRepository.findByUsername(user.getUsername())
-                .orElseThrow(() -> new StoreReservationException(ErrorCode.USER_NOT_FOUND));
+        User user = validateUser();
 
         // 예약 사용 여부
         Reservation reservation = reservationRepository.findById(reservationId)
@@ -46,16 +45,22 @@ public class ReviewService {
             throw new StoreReservationException(ErrorCode.RESERVATION_CANCELED);
         }
 
-        // 리뷰 상점
         Store store = reservation.getStore();
 
         // 리뷰 등록
         return ReviewDto.fromEntity(reviewRepository.save(Review.builder()
-                .user(findUser)
+                .user(user)
                 .store(store)
                 .title(title)
                 .content(content)
                 .rating(rating)
                 .build()));
+    }
+
+    // 유저 확인
+    private User validateUser() {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return userRepository.findByUsername(user.getUsername())
+                .orElseThrow(() -> new StoreReservationException(ErrorCode.USER_NOT_FOUND));
     }
 }

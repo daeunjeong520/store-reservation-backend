@@ -1,13 +1,13 @@
 package com.daeun.reservation.backend.exception;
 
 import com.daeun.reservation.backend.dto.ErrorResponse;
-import com.daeun.reservation.backend.dto.constants.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import static com.daeun.reservation.backend.dto.constants.ErrorCode.*;
+import static com.daeun.reservation.backend.dto.constants.ErrorCode.INTERNAL_SERVER_ERROR;
+import static com.daeun.reservation.backend.dto.constants.ErrorCode.USER_NOT_FOUND;
 
 @Slf4j
 @RestControllerAdvice

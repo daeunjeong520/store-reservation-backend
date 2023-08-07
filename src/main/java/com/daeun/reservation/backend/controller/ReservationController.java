@@ -2,6 +2,7 @@ package com.daeun.reservation.backend.controller;
 
 import com.daeun.reservation.backend.dto.RegisterReservation;
 import com.daeun.reservation.backend.dto.ReservationInfo;
+import com.daeun.reservation.backend.dto.constants.ApprovalStatus;
 import com.daeun.reservation.backend.service.ReservationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -20,19 +21,21 @@ public class ReservationController {
 
     private final ReservationService reservationService;
 
-    // 예약 진행 (TODO: 점주 -> 예약 취소, 승인 기능)
+    // 예약 진행
+    // localhost:8080/reservations?storeId=1&status=true (승인/거절)
     @PostMapping
-    @PreAuthorize("hasRole('ROLE_USER')")
     public RegisterReservation.Response registerReservation(
             @RequestBody @Valid RegisterReservation.Request request,
-            @RequestParam Long storeId
+            @RequestParam Long storeId,
+            @RequestParam ApprovalStatus status
     ) {
         return RegisterReservation.Response.from(
                 reservationService.registerReservation(
                         storeId,
                         request.getDate(),
                         request.getStarted(),
-                        request.getEnded()
+                        request.getEnded(),
+                        status
                 )
         );
     }

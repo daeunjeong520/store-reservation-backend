@@ -24,16 +24,12 @@ public class AuthController {
     // 회원가입
     @PostMapping("/signup")
     public SignUp.Response signup(@RequestBody SignUp.Request request) {
-
-        log.info("username={}", request.getUsername());
-        log.info("roles={}", request.getRoles());
-
-        UserDto userDto = userService.signup(
-                request.getUsername(),
-                request.getPassword(),
-                request.getRoles());
-
-        return SignUp.Response.from(userDto);
+        return SignUp.Response.from(
+                userService.signup(
+                        request.getUsername(),
+                        request.getPassword(),
+                        request.getRoles())
+        );
     }
 
     // 로그인
@@ -43,7 +39,8 @@ public class AuthController {
                 request.getUsername(),
                 request.getPassword()
         );
-        String token = tokenProvider.generateToken(userDto.getUsername(), userDto.getRoles());
-        return new SignIn.Response(token);
+        return new SignIn.Response(
+                tokenProvider.generateToken(userDto.getUsername(), userDto.getRoles())
+        );
     }
 }

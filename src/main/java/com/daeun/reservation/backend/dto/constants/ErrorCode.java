@@ -20,6 +20,7 @@ public enum ErrorCode {
     RESERVATION_ALREADY_USE("해당 예약은 이미 사용된 예약입니다"),
     NOT_ARRIVED_BEFORE_TEN_MINUTES("예약된 시간 10분 전 도착해야 합니다"),
     NOT_FOUND_RESERVATION_LIST("예약 목록이 존재하지 않습니다"),
+    RESERVATION_REFUSAL("예약이 거절되었습니다")
     ;
 
     private final String description;

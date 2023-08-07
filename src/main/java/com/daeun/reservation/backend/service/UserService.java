@@ -31,7 +31,9 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new StoreReservationException(USER_NOT_FOUND));
     }
 
-    // 회원가입
+    /**
+     * 회원가입
+     */
     @Transactional
     public UserDto signup(String username, String password, List<String> roles) {
         // 이미 존재하는 회원인지
@@ -50,7 +52,9 @@ public class UserService implements UserDetailsService {
         return UserDto.fromEntity(userRepository.save(user));
     }
 
-    // 로그인
+    /**
+     * 로그인
+     */
     @Transactional
     public UserDto signin(String username, String password) {
         // 패스워드 검증

@@ -1,6 +1,7 @@
 package com.daeun.reservation.backend.controller;
 
 import com.daeun.reservation.backend.dto.*;
+import com.daeun.reservation.backend.dto.constants.ApprovalStatus;
 import com.daeun.reservation.backend.service.StoreService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,17 +28,30 @@ public class StoreController {
     public RegisterStore.Response registerStore(
             @RequestBody @Valid RegisterStore.Request storeRequest
     ) {
-        StoreDto storeDto = storeService.registerStore(
-                storeRequest.getName(),
-                storeRequest.getLocation(),
-                storeRequest.getDescription()
+        return RegisterStore.Response.from(
+                storeService.registerStore(
+                        storeRequest.getName(),
+                        storeRequest.getLocation(),
+                        storeRequest.getDescription()
+                )
         );
-        return RegisterStore.Response.from(storeDto);
+    }
+
+    // 상점 상세조회
+    @GetMapping("/{storeId}")
+    public StoreInfo getStore(
+            @PathVariable Long storeId
+    ) {
+        return StoreInfo.from(
+                storeService.getStore(storeId)
+        );
     }
 
     // 상점 리스트 조회(기본, 가나다순)
     @GetMapping
-    public List<StoreInfo> getStores(@RequestParam(required = false) Boolean isOrder) {
+    public List<StoreInfo> getStores(
+            @RequestParam(required = false) Boolean isOrder
+    ) {
         List<StoreDto> storeDtos;
         if(isOrder == null) {
                storeDtos = storeService.getStores();
@@ -78,10 +92,21 @@ public class StoreController {
                 .collect(Collectors.toList());
     }
 
-    // 상점 상세조회
-    @GetMapping("/{storeId}")
-    public StoreInfo getStore() {
-        // TODO
-        return null;
+    // 점주 예약 승인/거절
+    // localhost:8080/stores/1/approval?status=true (승인/거절)
+    @GetMapping("/{storeId}/approval")
+    @PreAuthorize("hasRole('ROLE_MANAGER')")
+    public ApprovalStatus getApprovalStatus(
+            @RequestBody @Valid RegisterReservation.Request request,
+            @PathVariable Long storeId,
+            @RequestParam Boolean status
+    ) {
+        return storeService.getApprovalStatus(
+                storeId,
+                request.getDate(),
+                request.getStarted(),
+                request.getEnded(),
+                status
+        );
     }
 }

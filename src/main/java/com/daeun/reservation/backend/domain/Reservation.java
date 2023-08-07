@@ -32,5 +32,6 @@ public class Reservation {
 
     @Setter
     @Enumerated(EnumType.STRING)
+    @Column(name = "reservation_status", nullable = false)
     private ReservationStatus reservationStatus; // 예약 상태
 }

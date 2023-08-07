@@ -32,7 +32,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if(StringUtils.hasText(token) && this.tokenProvider.validateToken(token)) {
             Authentication auth = this.tokenProvider.getAuthentication(token);
 
-            // 토큰이 유효하다면 인증 정보를 context에 담는다
+            // 토큰이 유효하다면 인증 정보를 context에 담음
             SecurityContextHolder.getContext().setAuthentication(auth);
         }
 

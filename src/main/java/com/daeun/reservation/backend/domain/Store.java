@@ -20,8 +20,13 @@ public class Store {
     @Column(name = "store_id")
     private Long storeId;
 
+    @Column(name = "name", nullable = false, length = 100)
     private String name; // 매장명
+
+    @Column(name = "location", nullable = false)
     private String location; // 상점위치
+
+    @Column(name = "description", nullable = false, length = 500)
     private String description; // 상점설명
 
     @ManyToOne(fetch = LAZY)

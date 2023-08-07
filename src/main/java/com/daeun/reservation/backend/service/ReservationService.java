@@ -37,15 +37,12 @@ public class ReservationService {
      * 예약 등록
      */
     @Transactional
-    public ReservationDto registerReservation(Long storeId, LocalDate date, LocalTime started, LocalTime ended) {
+    public ReservationDto registerReservation(Long storeId, LocalDate date, LocalTime started, LocalTime ended, ApprovalStatus approvalStatus) {
         // 사용자 확인
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User findUser = userRepository.findByUsername(user.getUsername())
-                .orElseThrow(() -> new StoreReservationException(ErrorCode.USER_NOT_FOUND));
-        
+        User user = validateUser();
+
         // 상점 확인
-        Store store = storeRepository.findById(storeId)
-                .orElseThrow(() -> new StoreReservationException(ErrorCode.STORE_NOT_FOUND));
+        Store store = validateStore(storeId);
 
         // 예약 시간 확인
         TimeTable timeTable = timeTableRepository.findByStore_StoreIdAndDateAndStartedAndEnded(storeId, date, started, ended)
@@ -56,8 +53,10 @@ public class ReservationService {
             throw new StoreReservationException(ErrorCode.TIMETABLE_ALREADY_USE);
         }
 
-        // TODO: 예약 정보 확인 후 승인/예약 거절 처리
-
+        // 점주의 요청 상태로 예약 승인/거절
+        if(approvalStatus == ApprovalStatus.REFUSAL) {
+           throw new StoreReservationException(ErrorCode.RESERVATION_REFUSAL);
+        }
 
         // 해당 예약 시간 사용 상태로 변경(BEFORE_USE -> USE)
         timeTable.setStatus(TimeTableStatus.USE);
@@ -66,7 +65,7 @@ public class ReservationService {
         return ReservationDto.fromEntity(
                 reservationRepository.save(
                         Reservation.builder()
-                                .user(findUser)
+                                .user(user)
                                 .store(store)
                                 .timeTable(timeTable)
                                 .reservationStatus(ReservationStatus.REGISTRATION_COMP) // 예약 등록 완료
@@ -81,9 +80,7 @@ public class ReservationService {
     @Transactional
     public ReservationDto useReservation(Long reservationId, LocalTime arrivedAt) {
         // 사용자 확인
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User findUser = userRepository.findByUsername(user.getUsername())
-                .orElseThrow(() -> new StoreReservationException(ErrorCode.USER_NOT_FOUND));
+        User user = validateUser();
 
         // 예약 여부 확인
         Reservation reservation = reservationRepository.findById(reservationId)
@@ -117,16 +114,13 @@ public class ReservationService {
      */
     public List<ReservationDto> getReservationList(Long storeId) {
         // 유저 확인
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User findUser = userRepository.findByUsername(user.getUsername())
-                .orElseThrow(() -> new StoreReservationException(ErrorCode.USER_NOT_FOUND));
+        User user = validateUser();
 
         // 상점 확인
-        Store store = storeRepository.findById(storeId)
-                .orElseThrow(() -> new StoreReservationException(ErrorCode.STORE_NOT_FOUND));
+        Store store = validateStore(storeId);
 
         // 예약 목록 조회
-        List<Reservation> reservationList = reservationRepository.findAllByUser_UserIdAndStore_StoreId(findUser.getUserId(), storeId);
+        List<Reservation> reservationList = reservationRepository.findAllByUser_UserIdAndStore_StoreId(user.getUserId(), storeId);
         if(reservationList.size() == 0) {
             throw new StoreReservationException(ErrorCode.NOT_FOUND_RESERVATION_LIST);
         }
@@ -141,20 +135,30 @@ public class ReservationService {
      */
     public List<ReservationDto> getUsedReservationList(Long storeId) {
         // 유저 확인
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User findUser = userRepository.findByUsername(user.getUsername())
-                .orElseThrow(() -> new StoreReservationException(ErrorCode.USER_NOT_FOUND));
+        User user = validateUser();
 
         // 상점 확인
-        Store store = storeRepository.findById(storeId)
-                .orElseThrow(() -> new StoreReservationException(ErrorCode.STORE_NOT_FOUND));
+        Store store = validateStore(storeId);
 
         // 예약 목록 조회
         return  reservationRepository.findAllByUser_UserIdAndStore_StoreIdAndReservationStatus(
-                    findUser.getUserId(), storeId, ReservationStatus.USE_COM
+                    user.getUserId(), storeId, ReservationStatus.USE_COM
                 )
                 .stream()
                 .map(ReservationDto::fromEntity)
                 .collect(Collectors.toList());
+    }
+
+    // 유저 확인
+    private User validateUser() {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return userRepository.findByUsername(user.getUsername())
+                .orElseThrow(() -> new StoreReservationException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    // 상점 확인
+    private Store validateStore(Long storeId) {
+        return storeRepository.findById(storeId)
+                .orElseThrow(() -> new StoreReservationException(ErrorCode.STORE_NOT_FOUND));
     }
 }

@@ -3,14 +3,25 @@ package com.daeun.reservation.backend.dto;
 import com.daeun.reservation.backend.dto.constants.Rating;
 import lombok.*;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotNull;
+
 public class CreateReview {
 
     @Getter
     @Setter
     @AllArgsConstructor
     public static class Request {
+
+        @NotNull
+        @Max(100)
         private String title;
+
+        @NotNull
+        @Max(500)
         private String content;
+
+        @NotNull
         private Rating rating;
     }
 
@@ -22,8 +33,11 @@ public class CreateReview {
     public static class Response {
 
         private Long reviewId;
+
         private String username;
+
         private String storeName;
+
         private Rating rating;
 
         public static Response from(ReviewDto reviewDto) {

@@ -23,12 +23,16 @@ public class TimeTable {
     private Long timeTableId;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "store_id")
+    @JoinColumn(name = "store_id", nullable = false)
     private Store store;
 
+    @Column(name = "date", nullable = false)
     private LocalDate date; // 날짜
 
+    @Column(name = "started", nullable = false)
     private LocalTime started; // 시작 시간
+
+    @Column(name = "ended", nullable = false)
     private LocalTime ended; // 종료 시간
 
     @Setter

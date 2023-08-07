@@ -38,11 +38,4 @@ public class TimeTableDto {
                 .status(timeTable.getStatus())
                 .build();
     }
-
-    public static TimeTableDto fromEntityByDate(TimeTable timeTable) {
-        return TimeTableDto.builder()
-                .started(timeTable.getStarted())
-                .ended(timeTable.getEnded())
-                .build();
-    }
 }

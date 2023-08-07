@@ -2,14 +2,25 @@ package com.daeun.reservation.backend.dto;
 
 import lombok.*;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotNull;
+
 public class RegisterStore {
 
     @Getter
     @Setter
     @AllArgsConstructor
     public static class Request {
+
+        @NotNull
+        @Max(100)
         private String name;
+
+        @NotNull
         private String location;
+
+        @NotNull
+        @Max(500)
         private String description;
     }
 

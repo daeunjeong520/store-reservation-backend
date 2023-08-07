@@ -6,6 +6,7 @@ import com.daeun.reservation.backend.domain.User;
 import com.daeun.reservation.backend.dto.StoreDto;
 import com.daeun.reservation.backend.dto.TimeTableDto;
 import com.daeun.reservation.backend.dto.constants.ErrorCode;
+import com.daeun.reservation.backend.dto.constants.ApprovalStatus;
 import com.daeun.reservation.backend.dto.constants.TimeTableStatus;
 import com.daeun.reservation.backend.exception.StoreReservationException;
 import com.daeun.reservation.backend.repository.StoreRepository;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,16 +35,17 @@ public class StoreService {
     private final StoreRepository storeRepository;
     private final TimeTableRepository timeTableRepository;
 
-    // 상점등록
+    /**
+     * 상점 등록
+     */
     @Transactional
     public StoreDto registerStore(String name, String location, String description) {
 
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User findUser = userRepository.findByUsername(user.getUsername())
-                .orElseThrow(() -> new StoreReservationException(ErrorCode.USER_NOT_FOUND));
+        // 유저 확인
+        User user = validateUser();
 
         Store store = Store.builder()
-                .user(findUser)
+                .user(user)
                 .name(name)
                 .location(location)
                 .description(description)
@@ -52,7 +55,16 @@ public class StoreService {
         return StoreDto.fromEntity(storeRepository.save(store));
     }
 
-    // 상점 리스트 조회(기본)
+    /**
+     * 상점 상세 조회
+     */
+    public StoreDto getStore(Long storeId) {
+        return StoreDto.fromEntity(validateStore(storeId));
+    }
+
+    /**
+     * 상점 리스트 조회(기본)
+     */
     public List<StoreDto> getStores() {
         return storeRepository.findAll()
                 .stream()
@@ -60,7 +72,9 @@ public class StoreService {
                 .collect(Collectors.toList());
     }
 
-    // 상점 리스트 조회(가나다순)
+    /**
+     * 상점 리스트 조회(가나다순)
+     */
     public List<StoreDto> getStoresOrderByName() {
         return storeRepository.findAll(Sort.by(Sort.Direction.ASC, "name"))
                 .stream()
@@ -68,12 +82,13 @@ public class StoreService {
                 .collect(Collectors.toList());
     }
 
-    // 상점 예약 테이블 저장
+    /**
+     * 상점 예약 테이블 저장
+     */
     @Transactional
     public List<TimeTableDto> createTimeTable(Long storeId, List<TimeTableDto> timeTableDtos) {
-        // 상점 여부 확인
-        Store store = storeRepository.findById(storeId)
-                .orElseThrow(() -> new StoreReservationException(ErrorCode.STORE_NOT_FOUND));
+        // 상점 확인
+        Store store = validateStore(storeId);
 
         List<TimeTable> timeTables = timeTableDtos.stream()
                 .map(timeTableDto -> TimeTable.to(store, timeTableDto))
@@ -97,11 +112,12 @@ public class StoreService {
         return savedTimeTableDtos;
     }
 
-    // 상점 예약 테이블 조회(사용 가능한 예약 테이블만 제공)
+    /**
+     * 상점 예약 테이블 조회(사용 가능한 예약 테이블만 제공)
+     */
     public List<TimeTableDto> getTimeTableByDate(Long storeId, LocalDate date) {
-        // 상점 조회
-        Store store = storeRepository.findById(storeId)
-                .orElseThrow(() -> new StoreReservationException(ErrorCode.STORE_NOT_FOUND));
+        // 상점 확인
+        Store store = validateStore(storeId);
 
         // 해당 날짜의 예약 테이블 시간 조회(Timetable 의 상태 -> before_use 만)
         List<TimeTableDto> timeTableDtos = new ArrayList<>();
@@ -115,7 +131,34 @@ public class StoreService {
         return timeTableDtos;
     }
 
-    // 상점 상세조회
+    /**
+     * 점주 예약 확인 후 승인/거절
+     */
+    public ApprovalStatus getApprovalStatus(Long storeId, LocalDate date, LocalTime started, LocalTime ended, Boolean status) {
+        // 상점 확인
+        validateStore(storeId);
 
-    
+        // 예약 시간 확인
+        timeTableRepository.findByStore_StoreIdAndDateAndStartedAndEnded(storeId, date, started, ended)
+                .orElseThrow(() -> new StoreReservationException(ErrorCode.TIMETABLE_NOT_FOUND));
+
+        // 점주 요청 상태(status -> true/false)
+        if(!status) {
+            return ApprovalStatus.REFUSAL;
+        }
+        return ApprovalStatus.APPROVAL;
+    }
+
+    // 유저 확인
+    private User validateUser() {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return userRepository.findByUsername(user.getUsername())
+                .orElseThrow(() -> new StoreReservationException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    // 상점 확인
+    private Store validateStore(Long storeId) {
+        return storeRepository.findById(storeId)
+                .orElseThrow(() -> new StoreReservationException(ErrorCode.STORE_NOT_FOUND));
+    }
 }
